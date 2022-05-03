@@ -10,7 +10,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 @Target({ FIELD })
 @Retention(RUNTIME)
-@Constraint(validatedBy = UserLoginVaidator.class)
+@Constraint(validatedBy = UserLoginValidator.class)
 public @interface UserLogin {
     String message() default "{Login не должен быть пустым или содержать пробелов.}";
 

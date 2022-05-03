@@ -19,7 +19,7 @@ import java.util.Map;
 @Slf4j
 public class UserController {
     int id = 0;
-    Map<Integer, User> userMap;
+    final Map<Integer, User> userMap;
 
     public UserController() {
         userMap = new HashMap<>();
@@ -45,21 +45,20 @@ public class UserController {
         if (user.getId() != null && userMap.containsKey(user.getId())) {
             userMap.put(user.getId(), user);
             log.info("Обновлен ползователь: " + user.getLogin());
-            return user;
         } else {
             checkUserName(user);
             user.setId(id);
             id++;
             userMap.put(user.getId(), user);
             log.info("Добавлен новый ползователь: " + user.getLogin());
-            return user;
         }
+        return user;
     }
 
     @GetMapping("/users")
     public List<User> findAll() {
         log.trace("Передан список всех Users");
-        return new ArrayList<User>(userMap.values());
+        return new ArrayList<>(userMap.values());
     }
 
     private void checkUserName(User user) {
