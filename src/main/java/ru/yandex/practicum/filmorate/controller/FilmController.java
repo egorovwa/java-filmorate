@@ -5,19 +5,18 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @Slf4j
 public class FilmController {
     int id = 0;
    private final Map<Integer, Film> filmMap;
-
     public FilmController() {
-        filmMap = new HashMap<>();
+        filmMap = new ConcurrentHashMap<>();
 
     }
 
@@ -26,7 +25,7 @@ public class FilmController {
         film.setId(id);
         id++;
         filmMap.put(film.getId(), film);
-        log.info("Добавлен фильм: " + film.getName() + " всего фильмов: " + filmMap.size());
+        log.info("Добавлен фильм: {} всего фильмов: {}" ,film.getName() ,filmMap.size());
         return film;
     }
 
@@ -34,20 +33,20 @@ public class FilmController {
     public Film update(@Valid @RequestBody Film film) {
         if (film.getId() != null && filmMap.containsKey(film.getId())) {
             filmMap.put(film.getId(), film);
-            log.info("Обновлен фильм: " + film.getName() + " всего фильмов: " + filmMap.size());
+            log.info("Обновлен фильм: {} всего фильмов: {}" ,film.getName() ,filmMap.size());
         } else {
             film.setId(id);
             id++;
             filmMap.put(film.getId(), film);
-            log.info("Добавлен фильм: " + film.getName() + " всего фильмов: " + filmMap.size());
+            log.info("Добавлен фильм: {} всего фильмов: {}" ,film.getName() ,filmMap.size());
         }
         return film;
     }
 
     @GetMapping("/films")
-    public List<Film> findAll() {
+    public Collection<Film> findAll() {
         log.trace("Передан список всех фильмов");
-        return new ArrayList<>(filmMap.values());
+        return Collections.unmodifiableCollection(filmMap.values());
     }
 
 }
