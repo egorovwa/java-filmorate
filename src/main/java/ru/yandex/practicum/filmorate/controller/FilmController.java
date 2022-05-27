@@ -7,11 +7,9 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 @Slf4j
@@ -41,6 +39,11 @@ public class FilmController {
         return filmService.findAll();
     }
 
+    @GetMapping("/films/{id}")
+    public Film findById(@PathVariable @Min(1) int id){
+        return filmService.findById(id);
+    }
+
     @PutMapping("/films/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
         filmService.addLike(id, userId);
@@ -52,10 +55,10 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    public Collection<Film> findPopularFilm(@RequestParam Optional<Integer> mayBeCount) {
-        if (mayBeCount.isPresent()) {
-            if (mayBeCount.get() > 0) {
-                return filmService.findPopularFilm(mayBeCount.get());
+    public Collection<Film> findPopularFilm(@RequestParam Optional<Integer> count) {
+        if (count.isPresent()) {
+            if (count.get() > 0) {
+                return filmService.findPopularFilm(count.get());
             } else {
                 throw new IllegalArgumentException("count должен быть больше 0.");
             }

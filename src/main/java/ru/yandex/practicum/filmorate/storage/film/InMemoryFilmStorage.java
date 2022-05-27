@@ -15,14 +15,14 @@ import java.util.Map;
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
     Map<Integer, Film> filmMap = new HashMap<>();
-    int id = 0;
+    int id = 1;
 
     @Override
     public Film findById(int id) {
         if (filmMap.containsKey(id)) {
             return filmMap.get(id);
         } else {
-            throw new FilmNotFoundException("Фильм не найден.","id",String.valueOf(id));
+            throw new FilmNotFoundException("Фильм не найден.", "id", String.valueOf(id));
         }
 
     }
@@ -38,7 +38,7 @@ public class InMemoryFilmStorage implements FilmStorage {
             filmMap.put(film.getId(), film);
             return film;
         } else {
-            throw new FilmAlreadyExistsException("Фильм уже существует","id",String.valueOf(film.getId()));
+            throw new FilmAlreadyExistsException("Фильм уже существует", "id", String.valueOf(film.getId()));
         }
 
     }
@@ -48,9 +48,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (film.getId() != null && filmMap.containsKey(film.getId())) {
             filmMap.put(film.getId(), film);
         } else {
-            film.setId(id);
-            id++;
-            filmMap.put(film.getId(), film);
+            throw new FilmNotFoundException("Фильм не найден.", "id", String.valueOf(film.getId()));
         }
         return film;
     }
@@ -60,7 +58,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         if (filmMap.containsKey(id)) {
             filmMap.remove(id);
         } else {
-            throw new FilmNotFoundException("Фильм не найден.","id",String.valueOf(id));
+            throw new FilmNotFoundException("Фильм не найден.", "id", String.valueOf(id));
         }
 
     }

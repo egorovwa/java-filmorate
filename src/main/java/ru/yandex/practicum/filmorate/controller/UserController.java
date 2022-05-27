@@ -49,7 +49,7 @@ public class UserController {
         return userService.findUserById(id);
     }
 
-    @PostMapping("/users/{id}/friends/{friendId}")
+    @PutMapping("/users/{id}/friends/{friendId}")
     public void addFriend(@PathVariable @Min(0) int id, @PathVariable @Min(0) int friendId) {
 
         userService.addFriend(id, friendId);

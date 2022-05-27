@@ -53,4 +53,8 @@ public class FilmService {
     public Collection<Film> findAll(){
      return filmStorage.findAll();
     }
+
+    public Film findById(int id) {
+        return filmStorage.findById(id);
+    }
 }

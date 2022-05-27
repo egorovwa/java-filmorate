@@ -4,6 +4,7 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.controller.Validators.UserLogin;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.Collection;

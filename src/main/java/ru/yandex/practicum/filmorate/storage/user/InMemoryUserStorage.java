@@ -14,7 +14,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
-    int id = 0;
+    int id = 1;
     Map<Integer, User> userMap = new HashMap<>();
 
     @Override
@@ -38,8 +38,8 @@ public class InMemoryUserStorage implements UserStorage {
     public User add(User user) {
         if (user.getId() == null) {
             user.setId(id);
-            id++;
             userMap.put(user.getId(), user);
+            id++;
             return user;
         } else if (!userMap.containsKey(user.getId())) {
             userMap.put(user.getId(), user);
@@ -56,9 +56,11 @@ public class InMemoryUserStorage implements UserStorage {
         if (user.getId() != null && userMap.containsKey(user.getId())) {
             userMap.put(user.getId(), user);
         } else {
-            user.setId(id);
+            throw new UserNotFoundException("Ползователь не найден.","id",String.valueOf(user.getId()));
+// TODO: 27.05.2022 проверить
+            /*            user.setId(id);
             id++;
-            userMap.put(user.getId(), user);
+            userMap.put(user.getId(), user);*/
         }
         return user;
     }
