@@ -1,69 +1,72 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
-import org.springframework.http.HttpStatus;
-import org.springframework.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
+import javax.validation.constraints.Min;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 
 @RestController
 @Slf4j
+@Validated
 public class UserController {
-    int id = 0;
-    final Map<Integer, User> userMap;
+    UserService userService;
 
-    public UserController() {
-        userMap = new ConcurrentHashMap<>();
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+
     }
 
     @PostMapping("/users")
     public User addUser(@Valid @RequestBody User user) {
-        user.setId(id);
-        id++;
-        userMap.put(user.getId(), user);
-        log.info("Добавлен новый ползователь: {} всего пользавателей: {}", user.getLogin(),userMap.size());
-        return user;
+        log.info("Добавлен новый ползователь: {}", user.getLogin());
+        return userService.addUser(user);
     }
-@ExceptionHandler(ValidationException.class)
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-    private Response checkUserEmail(ValidationException e) {
-        return new Response();
 
-    }
+
 
     @PutMapping("/users")
     public User update(@Valid @RequestBody User user) {
-        if (user.getId() != null && userMap.containsKey(user.getId())) {
-            userMap.put(user.getId(), user);
-            log.info("Обновлен ползователь: {}", user.getLogin());
-        } else {
-            checkUserName(user);
-            user.setId(id);
-            id++;
-            userMap.put(user.getId(), user);
-            log.info("Добавлен новый ползаватель: {} всего пользавателей: {}", user.getLogin(),userMap.size());
-        }
-        return user;
+        return userService.update(user);
     }
 
     @GetMapping("/users")
     public Collection<User> findAll() {
         log.trace("Передан список всех Users");
-        return Collections.unmodifiableCollection(userMap.values());
+        return userService.findAll();
     }
 
-    private void checkUserName(User user) {
-        if (StringUtils.hasText(user.getName())) {
-            user.setName(user.getLogin());
-        }
+    @GetMapping("/users/{id}")
+    public User findUserById(@PathVariable @Min(0) int id) {
+        return userService.findUserById(id);
     }
+
+    @PostMapping("/users/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable @Min(0) int id, @PathVariable @Min(0) int friendId) {
+
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/users/{id}/friends/{friendId}")
+    public void deleteFriend(@PathVariable @Min(0) int id, @PathVariable @Min(0) int friendId) {
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/users/{id}/friends")
+    public Collection<User> findFriends(@PathVariable @Min(0) int id) {
+        return userService.getAllFriends(id);
+    }
+    @GetMapping("/users/{id}/friends/common/{otherId}")
+    public Collection<User> findCommonFriends(@PathVariable @Min(0) int id,@PathVariable @Min(0) int otherId){
+        return  userService.findCommonFriends(id,otherId);
+    }
+
 }
