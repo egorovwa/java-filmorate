@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.Collection;
-import java.util.Optional;
 
 @RestController
 @Slf4j
@@ -55,14 +54,7 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    public Collection<Film> findPopularFilm(@RequestParam Optional<Integer> count) {
-        if (count.isPresent()) {
-            if (count.get() > 0) {
-                return filmService.findPopularFilm(count.get());
-            } else {
-                throw new IllegalArgumentException("count должен быть больше 0.");
-            }
-        } else return filmService.findPopularFilm(DEFAULT_COUNT);
-
+    public Collection<Film> findPopularFilm(@RequestParam(defaultValue = "10",value = "count") int count) {
+       return filmService.findPopularFilm(count);
     }
 }

@@ -30,15 +30,15 @@ public class FilmService {
 
     public void deleteLike(int id, int userId) {
         Film film = filmStorage.findById(id);
-        if (film.getLikeSet().contains(id)) {
-            film.getLikeSet().remove(id);
+        if (film.getLikeSet().contains(userId)) {
+            film.getLikeSet().remove(userId);
         } else {
             throw new FilmNotFoundException("Лайк фильма не найден","Id",String.valueOf(id));
         }
     }
 
     public Collection<Film> findPopularFilm(int count) {
-        return filmStorage.findAll().stream().sorted(Comparator.comparingInt(r -> r.getLikeSet().size()))
+        return filmStorage.findAll().stream().sorted(Comparator.comparingInt(r -> -r.getLikeSet().size()))
                 .limit(count).collect(Collectors.toList());
     }
 
