@@ -13,7 +13,6 @@ import java.util.Collection;
 
 
 @RestController
-@Slf4j
 @Validated
 public class UserController {
     UserService userService;
@@ -27,31 +26,31 @@ public class UserController {
 
     @PostMapping("/users")
     public User addUser(@Valid @RequestBody User user) {
-        log.info("Добавлен новый ползователь: {}", user.getLogin());
+
         return userService.addUser(user);
     }
 
 
-
     @PutMapping("/users")
     public User update(@Valid @RequestBody User user) {
+
         return userService.update(user);
     }
 
     @GetMapping("/users")
     public Collection<User> findAll() {
-        log.trace("Передан список всех Users");
+
         return userService.findAll();
     }
 
     @GetMapping("/users/{id}")
     public User findUserById(@PathVariable @Min(0) int id) {
+
         return userService.findUserById(id);
     }
 
     @PutMapping("/users/{id}/friends/{friendId}")
     public void addFriend(@PathVariable @Min(0) int id, @PathVariable @Min(0) int friendId) {
-
         userService.addFriend(id, friendId);
     }
 
@@ -64,9 +63,10 @@ public class UserController {
     public Collection<User> findFriends(@PathVariable @Min(0) int id) {
         return userService.getAllFriends(id);
     }
+
     @GetMapping("/users/{id}/friends/common/{otherId}")
-    public Collection<User> findCommonFriends(@PathVariable @Min(0) int id,@PathVariable @Min(0) int otherId){
-        return  userService.findCommonFriends(id,otherId);
+    public Collection<User> findCommonFriends(@PathVariable @Min(0) int id, @PathVariable @Min(0) int otherId) {
+        return userService.findCommonFriends(id, otherId);
     }
 
 }

@@ -11,7 +11,6 @@ import javax.validation.constraints.Min;
 import java.util.Collection;
 
 @RestController
-@Slf4j
 public class FilmController {
     public static final int DEFAULT_COUNT = 10;
     FilmService filmService;

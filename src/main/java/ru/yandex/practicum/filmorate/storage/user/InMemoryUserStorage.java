@@ -22,8 +22,8 @@ public class InMemoryUserStorage implements UserStorage {
         if (userMap.containsKey(findedId)) {
             return userMap.get(findedId);
         } else {
-            log.debug("Ползователь не найден. id {}",String.valueOf(findedId));
-            throw new UserNotFoundException("Ползователь не найден.","id",String.valueOf(findedId));
+            log.debug("Ползователь не найден. id {}", String.valueOf(findedId));
+            throw new UserNotFoundException("Ползователь не найден.", "id", String.valueOf(findedId));
         }
 
     }
@@ -31,7 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User findByEmail(String email) {
         return userMap.values().stream().filter(u -> u.getEmail().equals(email))
-                .findFirst().orElseThrow();       //NoSuchElementException
+                .findFirst().orElseThrow();
     }
 
     @Override
@@ -40,13 +40,15 @@ public class InMemoryUserStorage implements UserStorage {
             user.setId(id);
             userMap.put(user.getId(), user);
             id++;
+            log.info("Добавлен новый ползователь: {} присвоенно id {} ", user.getLogin(), id);
             return user;
         } else if (!userMap.containsKey(user.getId())) {
             userMap.put(user.getId(), user);
+            log.info("Добавлен новый ползователь: {} ", user.getLogin());
             return user;
         } else {
-            log.debug("Ползователь уже существует.Id {}", String.valueOf(user.getId()));
-            throw new UserAlreadyExistsException("Ползователь уже существует.","Id", String.valueOf(user.getId()));
+            log.info("Ползователь уже существует.Id {}", String.valueOf(user.getId()));
+            throw new UserAlreadyExistsException("Ползователь уже существует.", "Id", String.valueOf(user.getId()));
         }
 
     }
@@ -54,13 +56,11 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User update(User user) {
         if (user.getId() != null && userMap.containsKey(user.getId())) {
+            log.info("Обновлен ползователь: {}", user.getLogin());
             userMap.put(user.getId(), user);
         } else {
-            throw new UserNotFoundException("Ползователь не найден.","id",String.valueOf(user.getId()));
-// TODO: 27.05.2022 проверить
-            /*            user.setId(id);
-            id++;
-            userMap.put(user.getId(), user);*/
+            log.info("Пользователь не найден {}", id);
+            throw new UserNotFoundException("Ползователь не найден.", "id", String.valueOf(user.getId()));
         }
         return user;
     }
@@ -69,9 +69,11 @@ public class InMemoryUserStorage implements UserStorage {
     public User delete(User user) {
         if (userMap.containsKey(user.getId())) {
             userMap.remove(user.getId());
+            log.info("Удален ползователь: {}", user.getLogin());
             return user;
         } else {
-            throw new UserNotFoundException("Ползователь не найден.","id",String.valueOf(user.getId()));
+            log.info("Пользователь не найден {}", id);
+            throw new UserNotFoundException("Ползователь не найден.", "id", String.valueOf(user.getId()));
         }
     }
 

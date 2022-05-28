@@ -27,12 +27,13 @@ public class UserService {
     public void addFriend(int userId, int friendId) {
         userStorage.findById(userId).getFriends().add(friendId);
         userStorage.findById(friendId).getFriends().add(userId);
-        log.debug("Пользователь {} добавил в друзья {}",userId,friendId);
+        log.debug("Пользователь {} добавил в друзья {}", userId, friendId);
     }
-    public void deleteFriend(int userId, int friendId){
+
+    public void deleteFriend(int userId, int friendId) {
         userStorage.findById(userId).getFriends().remove(friendId);
         userStorage.findById(friendId).getFriends().remove(userId);
-        log.debug("Пользователь {} удалил из друзей {}",userId,friendId);
+        log.debug("Пользователь {} удалил из друзей {}", userId, friendId);
     }
 
     public Collection<User> findCommonFriends(int id, int other) {
@@ -42,10 +43,11 @@ public class UserService {
                 .collect(Collectors.toList());
         return commonId.stream().map(r -> {
             try {
-                log.debug("Передан список пересекающихся друзей пользователя {} с {}", id,other);
+                log.debug("Передан список пересекающихся друзей пользователя {} с {}", id, other);
                 return userStorage.findById(r);
             } catch (UserNotFoundException e) {
                 userFriends.remove(r);
+
                 return null;
             }
         }).filter(Objects::nonNull).collect(Collectors.toList());
@@ -56,6 +58,7 @@ public class UserService {
 
         return friendsId.stream().map(r -> {
             try {
+                log.debug("Передан список  друзей пользователя {}", id);
                 return userStorage.findById(r);
             } catch (UserNotFoundException e) {
                 friendsId.remove(r);
@@ -65,20 +68,25 @@ public class UserService {
     }
 
     public User addUser(User user) {
-       checkUserName(user);
+        checkUserName(user);
+
         return userStorage.add(user);
     }
 
     public User update(User user) {
         checkUserName(user);
+
         return userStorage.update(user);
     }
 
     public Collection<User> findAll() {
+        log.info("Передан список всех Users");
         return userStorage.findAll();
     }
+
     public User findUserById(int id) {
-       return userStorage.findById(id);
+        log.info("Передан пользователь id = {}", id);
+        return userStorage.findById(id);
     }
 
     private void checkUserName(User user) {
