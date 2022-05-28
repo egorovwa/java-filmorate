@@ -15,14 +15,14 @@ import java.util.Map;
 @Slf4j
 public class InMemoryUserStorage implements UserStorage {
     int id = 1;
-    Map<Integer, User> userMap = new HashMap<>();
+    final Map<Integer, User> userMap = new HashMap<>();
 
     @Override
     public User findById(int findedId) {
         if (userMap.containsKey(findedId)) {
             return userMap.get(findedId);
         } else {
-            log.debug("Ползователь не найден. id {}", String.valueOf(findedId));
+            log.debug("Ползователь не найден. id {}", findedId);
             throw new UserNotFoundException("Ползователь не найден.", "id", String.valueOf(findedId));
         }
 
@@ -47,7 +47,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.info("Добавлен новый ползователь: {} ", user.getLogin());
             return user;
         } else {
-            log.info("Ползователь уже существует.Id {}", String.valueOf(user.getId()));
+            log.info("Ползователь уже существует.Id {}", user.getId());
             throw new UserAlreadyExistsException("Ползователь уже существует.", "Id", String.valueOf(user.getId()));
         }
 

@@ -14,7 +14,7 @@ import java.util.Map;
 @Component
 @Slf4j
 public class InMemoryFilmStorage implements FilmStorage {
-    Map<Integer, Film> filmMap = new HashMap<>();
+    final Map<Integer, Film> filmMap = new HashMap<>();
     int id = 1;
 
     @Override

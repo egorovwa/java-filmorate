@@ -1,8 +1,8 @@
 package ru.yandex.practicum.filmorate.exception;
 
 public class InvalidRequestException extends RuntimeException{
-    String parm;
-    String value;
+    final String parm;
+    final String value;
 
     public InvalidRequestException(String message, String parm, String value) {
         super(message);
