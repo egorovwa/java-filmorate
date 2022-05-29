@@ -18,7 +18,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     int id = 1;
 
     @Override
-    public Film findById(int id) {
+    public Film findById(int id) throws FilmNotFoundException {
         if (filmMap.containsKey(id)) {
             log.info("Передан  фильм id {}", id);
             return filmMap.get(id);
@@ -30,7 +30,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film addFilm(Film film) {
+    public Film addFilm(Film film) throws FilmAlreadyExistsException {
         if (film.getId() == null) {
             film.setId(id);
             filmMap.put(film.getId(), film);
@@ -42,14 +42,13 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.info("Добавлен фильм: {}", film.getName());
             return film;
         } else {
-            log.info("Фильм уже существует id {}",film.getId());
             throw new FilmAlreadyExistsException("Фильм уже существует", "id", String.valueOf(film.getId()));
         }
 
     }
 
     @Override
-    public Film update(Film film) {
+    public Film update(Film film) throws FilmNotFoundException {
         if (film.getId() != null && filmMap.containsKey(film.getId())) {
             filmMap.put(film.getId(), film);
             log.info("Обновлен фильм: {}", film.getName());
@@ -61,7 +60,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public void delete(int id) {
+    public void delete(int id) throws FilmNotFoundException {
         if (filmMap.containsKey(id)) {
             filmMap.remove(id);
             log.info("Обновлен удален: {}", id);

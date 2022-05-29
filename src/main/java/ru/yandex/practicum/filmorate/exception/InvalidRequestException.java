@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.exception;
 
-public class InvalidRequestException extends RuntimeException{
+public class InvalidRequestException extends Exception{
     final String parm;
     final String value;
 

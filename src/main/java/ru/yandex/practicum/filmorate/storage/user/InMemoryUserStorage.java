@@ -18,7 +18,7 @@ public class InMemoryUserStorage implements UserStorage {
     final Map<Integer, User> userMap = new HashMap<>();
 
     @Override
-    public User findById(int findedId) {
+    public User findById(int findedId) throws UserNotFoundException {
         if (userMap.containsKey(findedId)) {
             return userMap.get(findedId);
         } else {
@@ -35,7 +35,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User add(User user) {
+    public User add(User user) throws UserAlreadyExistsException {
         if (user.getId() == null) {
             user.setId(id);
             userMap.put(user.getId(), user);
@@ -54,7 +54,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) {
+    public User update(User user) throws UserNotFoundException {
         if (user.getId() != null && userMap.containsKey(user.getId())) {
             log.info("Обновлен ползователь: {}", user.getLogin());
             userMap.put(user.getId(), user);
@@ -66,7 +66,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User delete(User user) {
+    public User delete(User user) throws UserNotFoundException {
         if (userMap.containsKey(user.getId())) {
             userMap.remove(user.getId());
             log.info("Удален ползователь: {}", user.getLogin());

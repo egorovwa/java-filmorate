@@ -1,9 +1,10 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import ru.yandex.practicum.filmorate.exception.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -16,27 +17,22 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class UserService {
     private final UserStorage userStorage;
-
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-    }
-
-    public void addFriend(int userId, int friendId) {
+    public void addFriend(int userId, int friendId) throws UserNotFoundException {
         userStorage.findById(userId).getFriends().add(friendId);
         userStorage.findById(friendId).getFriends().add(userId);
         log.debug("Пользователь {} добавил в друзья {}", userId, friendId);
     }
 
-    public void deleteFriend(int userId, int friendId) {
+    public void deleteFriend(int userId, int friendId) throws UserNotFoundException {
         userStorage.findById(userId).getFriends().remove(friendId);
         userStorage.findById(friendId).getFriends().remove(userId);
         log.debug("Пользователь {} удалил из друзей {}", userId, friendId);
     }
 
-    public Collection<User> findCommonFriends(int id, int other) {
+    public Collection<User> findCommonFriends(int id, int other) throws UserNotFoundException {
         Set<Integer> userFriends = userStorage.findById(id).getFriends();
         Set<Integer> otherFriends = userStorage.findById(other).getFriends();
         List<Integer> commonId = userFriends.stream().filter(otherFriends::contains)
@@ -53,7 +49,7 @@ public class UserService {
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public Collection<User> getAllFriends(int id) {
+    public Collection<User> getAllFriends(int id) throws UserNotFoundException {
         Set<Integer> friendsId = userStorage.findById(id).getFriends();
 
         return friendsId.stream().map(r -> {
@@ -67,13 +63,13 @@ public class UserService {
         }).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
-    public User addUser(User user) {
+    public User addUser(User user) throws UserAlreadyExistsException {
         checkUserName(user);
 
         return userStorage.add(user);
     }
 
-    public User update(User user) {
+    public User update(User user) throws UserNotFoundException {
         checkUserName(user);
 
         return userStorage.update(user);
@@ -84,7 +80,7 @@ public class UserService {
         return userStorage.findAll();
     }
 
-    public User findUserById(int id) {
+    public User findUserById(int id) throws UserNotFoundException {
         log.info("Передан пользователь id = {}", id);
         return userStorage.findById(id);
     }
