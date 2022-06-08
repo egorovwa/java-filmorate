@@ -1,52 +1,53 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistsException;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
-@Slf4j
+@RequiredArgsConstructor
 public class FilmController {
-    int id = 0;
-   private final Map<Integer, Film> filmMap;
-    public FilmController() {
-        filmMap = new ConcurrentHashMap<>();
-
-    }
+    private final FilmService filmService;
 
     @PostMapping("/films")
-    public Film addFilm(@Valid @RequestBody Film film) {
-        film.setId(id);
-        id++;
-        filmMap.put(film.getId(), film);
-        log.info("Добавлен фильм: {} всего фильмов: {}" ,film.getName() ,filmMap.size());
-        return film;
+    public Film addFilm(@Valid @RequestBody Film film) throws FilmAlreadyExistsException {
+        return filmService.addFilm(film);
     }
 
     @PutMapping("/films")
-    public Film update(@Valid @RequestBody Film film) {
-        if (film.getId() != null && filmMap.containsKey(film.getId())) {
-            filmMap.put(film.getId(), film);
-            log.info("Обновлен фильм: {} всего фильмов: {}" ,film.getName() ,filmMap.size());
-        } else {
-            film.setId(id);
-            id++;
-            filmMap.put(film.getId(), film);
-            log.info("Добавлен фильм: {} всего фильмов: {}" ,film.getName() ,filmMap.size());
-        }
-        return film;
+    public Film update(@Valid @RequestBody Film film) throws FilmNotFoundException {
+        return filmService.updateFilm(film);
     }
 
     @GetMapping("/films")
     public Collection<Film> findAll() {
-        log.trace("Передан список всех фильмов");
-        return Collections.unmodifiableCollection(filmMap.values());
+        return filmService.findAll();
     }
 
+    @GetMapping("/films/{id}")
+    public Film findById(@PathVariable @Min(1) int id) throws FilmNotFoundException {
+        return filmService.findById(id);
+    }
+
+    @PutMapping("/films/{id}/like/{userId}")
+    public void addLike(@PathVariable int id, @PathVariable int userId) throws FilmNotFoundException {
+        filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/films/{id}/like/{userId}")
+    public void deleteLike(@PathVariable int id, @PathVariable int userId) throws FilmNotFoundException {
+        filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/films/popular")
+    public Collection<Film> findPopularFilm(@RequestParam(defaultValue = "10", value = "count") int count) {
+        return filmService.findPopularFilm(count);
+    }
 }
