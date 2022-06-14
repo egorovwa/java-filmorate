@@ -21,14 +21,12 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserStorage userStorage;
     public void addFriend(int userId, int friendId) throws UserNotFoundException {
-        userStorage.findById(userId).getFriends().add(friendId);
-        userStorage.findById(friendId).getFriends().add(userId);
+        userStorage.findById(userId).getFriends().add(friendId); // TODO: 14.06.2022  Статус          
         log.debug("Пользователь {} добавил в друзья {}", userId, friendId);
     }
 
     public void deleteFriend(int userId, int friendId) throws UserNotFoundException {
-        userStorage.findById(userId).getFriends().remove(friendId);
-        userStorage.findById(friendId).getFriends().remove(userId);
+        userStorage.findById(userId).getFriends().remove(friendId); // TODO: 14.06.2022 Статус
         log.debug("Пользователь {} удалил из друзей {}", userId, friendId);
     }
 

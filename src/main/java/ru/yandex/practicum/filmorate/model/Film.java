@@ -24,7 +24,7 @@ public class Film {
     LocalDate releaseDate;
     @Positive
     Integer duration;
-    Mpa mpa;
-    Set<Genre> genres = new HashSet<>(); // TODO: 14.06.2022 продумать
+    Integer mpaId;
+    Set<Integer> genresId = new HashSet<>(); // TODO: 14.06.2022 продумать
     Set<Integer> likeSet = new HashSet<>();
 }
