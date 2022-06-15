@@ -2,7 +2,7 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.lang.NonNull;
+import lombok.NonNull;
 import ru.yandex.practicum.filmorate.controller.Validators.FilmReleaseDate;
 
 import javax.validation.constraints.NotBlank;
@@ -24,7 +24,9 @@ public class Film {
     LocalDate releaseDate;
     @Positive
     Integer duration;
+    @NonNull
     Integer mpaId;
+
     Set<Integer> genresId = new HashSet<>(); // TODO: 14.06.2022 продумать
     Set<Integer> likeSet = new HashSet<>();
 }

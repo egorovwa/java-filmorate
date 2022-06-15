@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS users
     login    varchar(20) NOT NULL UNIQUE ,
     name     varchar(40),
     birthday date
+
 );
 CREATE TABLE IF NOT EXISTS friendship
 (
@@ -50,4 +51,4 @@ CREATE TABLE IF NOT EXISTS likes
     film_id integer REFERENCES films (film_id)
 );
 
-ALTER TABLE films ADD CONSTRAINT films_add_References FOREIGN KEY (mpa_id) REFERENCES mpas(mpa_id);
+ALTER TABLE films ADD CONSTRAINT IF NOT EXISTS films_add_References FOREIGN KEY (mpa_id) REFERENCES mpas(mpa_id);
