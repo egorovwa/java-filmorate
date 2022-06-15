@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.storage.user.impl;
 
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.JDBCException;
 import org.springframework.context.annotation.Primary;
@@ -8,18 +9,20 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.FriendShip;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.user.FriendshipDao;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.text.DateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -33,28 +36,23 @@ import java.util.Set;
 @Slf4j
 public class UserDbStorage implements UserStorage {
     JdbcTemplate jdbcTemplate;
+    FriendshipDao friendshipDao;
 
-
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
+    public UserDbStorage(JdbcTemplate jdbcTemplate, FriendshipDao friendshipDao) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    private static void setValues(PreparedStatement ps) {
-
+        this.friendshipDao = friendshipDao;
     }
 
     @Override
     public User findById(int id) throws UserNotFoundException {
         String sql = "SELECT * FROM USERS WHERE USER_ID=?";
-        Optional<User> user = jdbcTemplate.query(sql,(rs, colNum)->createUser(rs),String.valueOf(id))
+        Optional<User> user = jdbcTemplate.query(sql, (rs, colNum) -> createUser(rs), String.valueOf(id))
                 .stream().findAny();
-        if (user.isPresent()){
+        if (user.isPresent()) {
             return user.get();
         } else {
-            throw  new UserNotFoundException("Ползователь не найден.", "id", String.valueOf(id));
+            throw new UserNotFoundException("Ползователь не найден.", "id", String.valueOf(id));
         }
-
-
     }
 
     private User createUser(ResultSet rs) throws SQLException {
@@ -63,48 +61,86 @@ public class UserDbStorage implements UserStorage {
         String login = rs.getString("LOGIN");
         String name = rs.getNString("NAME");
         LocalDate birthday = rs.getDate("BIRTHDAY").toLocalDate();
-        Set<Integer> friends = getUserFriendsId(id);
+        Set<Integer> friends = friendshipDao.findFriendshipsByUserId(id);
         return new User(id, email, login, name, birthday, friends);
     }
 
-    private Set<Integer> getUserFriendsId(Integer id) { // TODO: 15.06.2022 не забыть
-        String sql = "";
-        return null;
-
-    }
-
     @Override
-    public User findByEmail(String email) {
-        return null;
+    public User findByEmail(String email) throws UserNotFoundException {
+        String sql = "SELECT * FROM USERS WHERE EMAIL=?";
+        Optional<User> user = jdbcTemplate.query(sql, (rs, colNum) -> createUser(rs), String.valueOf(email))
+                .stream().findAny();
+        if (user.isPresent()) {
+            return user.get();
+        } else {
+            throw new UserNotFoundException("Ползователь не найден.", "email", email);
+        }
     }
 
     @Override
     public User add(User user) throws UserAlreadyExistsException {
-        String sql = "INSERT INTO USERS(email, login, name, birthday) VALUES (?,?,?,?)";
-        int update = jdbcTemplate.update(sql, ps -> {
-            ps.setString(1, user.getEmail());
-            ps.setString(2, user.getLogin());
-            ps.setString(3, user.getName());
-            ps.setDate(4,Date.valueOf(user.getBirthday()));
-        });
-        return user;
+
+        if (user.getId() == null) {
+            String sql = "INSERT INTO USERS(email, login, name, birthday) VALUES (?,?,?,?)";
+            KeyHolder keyHolder = new GeneratedKeyHolder();
+            jdbcTemplate.update(new PreparedStatementCreator() {// TODO: 15.06.2022 здесь не правильнвй id
+                @Override
+                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
+                    PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    statement.setString(1, user.getEmail());
+                    statement.setString(2, user.getLogin());
+                    statement.setString(3, user.getName());
+                    statement.setDate(4, Date.valueOf(user.getBirthday()));
+                    return statement;
+                }
+            },keyHolder);
+/*            int newId = jdbcTemplate.update(sql, ps -> {
+                ps.setString(1, user.getEmail());
+                ps.setString(2, user.getLogin());
+                ps.setString(3, user.getName());
+                ps.setDate(4, Date.valueOf(user.getBirthday()));
+            });*/
+            user.setId(keyHolder.getKey().intValue());
+            return user;
+        } else {
+            throw new UserAlreadyExistsException("Создание нового пользователя с id запрещено", "id",
+                    String.valueOf(user.getId()));
+        }
     }
 
 
     @Override
     public User update(User user) throws UserNotFoundException {
-        return null;
+        this.findById(user.getId());
+
+        String sql = "UPDATE USERS SET EMAIL =?, LOGIN =?,NAME=?,BIRTHDAY=?" +
+                "WHERE USER_ID = ?";
+        int update = jdbcTemplate.update(sql, ps -> {
+            ps.setInt(5, user.getId());
+            ps.setString(1, user.getEmail());
+            ps.setString(2, user.getLogin());
+            ps.setString(3, user.getName());
+            ps.setDate(4, Date.valueOf(user.getBirthday()));
+        });
+        if (user.getFriends() != null) {
+            user.getFriends().forEach(r -> friendshipDao.addFriend(user.getId(), r));
+        }
+        return user;
     }
 
     @Override
     public User delete(User user) throws UserNotFoundException {
-        return null;
+        String sql = "DELETE FROM FRIENDSHIP WHERE USER_ID = ?";
+        jdbcTemplate.update(sql, ps -> {
+            ps.setInt(1, user.getId());
+        });
+        return user;
     }
 
     @Override
     public Collection<User> findAll() {
         String sql = "SELECT * FROM USERS";
 
-        return jdbcTemplate.query(sql,(rs,rowNum)->createUser(rs));
+        return jdbcTemplate.query(sql, (rs, rowNum) -> createUser(rs));
     }
 }

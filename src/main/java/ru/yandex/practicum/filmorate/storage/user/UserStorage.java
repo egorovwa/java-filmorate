@@ -8,7 +8,7 @@ import java.util.Collection;
 
 public interface UserStorage {
     User findById(int id) throws UserNotFoundException;
-    User findByEmail(String email);
+    User findByEmail(String email) throws UserNotFoundException;
     User add(User user) throws UserAlreadyExistsException;
     User update(User user) throws UserNotFoundException;
     User delete(User user) throws UserNotFoundException;
