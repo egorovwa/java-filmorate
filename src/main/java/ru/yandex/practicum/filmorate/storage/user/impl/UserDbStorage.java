@@ -83,7 +83,7 @@ public class UserDbStorage implements UserStorage {
         if (user.getId() == null) {
             String sql = "INSERT INTO USERS(email, login, name, birthday) VALUES (?,?,?,?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(new PreparedStatementCreator() {// TODO: 15.06.2022 здесь не правильнвй id
+            jdbcTemplate.update(new PreparedStatementCreator() {
                 @Override
                 public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
                     PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);

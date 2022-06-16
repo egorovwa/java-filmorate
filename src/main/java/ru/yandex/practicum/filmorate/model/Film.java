@@ -10,6 +10,7 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -18,15 +19,14 @@ public class Film {
     Integer id;
     @NotBlank(message = "Название фильма не должно быть пустым.")
     String name;
-    @Size(min = 1,max = 200,message = "Размер описания долженбыть болше 1 и меньше 200 символов.")
+    @Size(min = 1, max = 200, message = "Размер описания долженбыть болше 1 и меньше 200 символов.")
     String description;
     @FilmReleaseDate
     LocalDate releaseDate;
     @Positive
     Integer duration;
-    @NonNull
-    Integer mpaId;
-
-    Set<Integer> genresId = new HashSet<>(); // TODO: 14.06.2022 продумать
+    Integer rate;
     Set<Integer> likeSet = new HashSet<>();
+    Mpa mpa;
+    Set<Genre> genres;
 }
