@@ -143,4 +143,9 @@ public class UserDbStorage implements UserStorage {
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> createUser(rs));
     }
+
+    @Override
+    public void deleteFriendship(Integer userId, Integer friendId) {
+        friendshipDao.deleteFriendShip(userId,friendId);
+    }
 }

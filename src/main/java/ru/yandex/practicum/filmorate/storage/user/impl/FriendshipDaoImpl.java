@@ -9,6 +9,7 @@ import java.util.*;
 
 @Component
 public class FriendshipDaoImpl implements FriendshipDao {
+    public static final String UDATE_STATUS_SQL = "UPDATE FRIENDSHIP SET STATUS=? WHERE ID=?";
     JdbcTemplate jdbcTemplate;
 
     public FriendshipDaoImpl(JdbcTemplate jdbcTemplate) {
@@ -33,8 +34,7 @@ public class FriendshipDaoImpl implements FriendshipDao {
                 ps.setInt(2, friendId);
                 ps.setBoolean(3, true);
             });
-            String udateStatusSql = "UPDATE FRIENDSHIP SET STATUS=? WHERE ID=?";
-            jdbcTemplate.update(udateStatusSql, ps -> {
+            jdbcTemplate.update(UDATE_STATUS_SQL, ps -> {
                 ps.setBoolean(1, true);
                 ps.setInt(2, mayBeFriendshipId.get());
             });
@@ -55,5 +55,19 @@ public class FriendshipDaoImpl implements FriendshipDao {
         if (rowSet.next()) {
             return Optional.of(rowSet.getInt("ID"));
         } else return Optional.empty();
+    }
+
+    @Override
+    public void deleteFriendShip(Integer userId, Integer friendId) {
+        String deleteFriendshipSql = "DELETE FROM FRIENDSHIP WHERE USER_ID=? AND FRIEND_ID=?";
+        Optional<Integer> mayBeFriendshipId = checkFrindship(userId, friendId);
+        mayBeFriendshipId.ifPresent(integer -> jdbcTemplate.update(UDATE_STATUS_SQL, ps -> {
+            ps.setBoolean(1, true);
+            ps.setInt(2, integer);
+        }));
+        jdbcTemplate.update(deleteFriendshipSql, ps -> {
+            ps.setInt(1, userId);
+            ps.setInt(2, friendId);
+        });
     }
 }

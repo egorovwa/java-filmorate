@@ -82,4 +82,9 @@ public class InMemoryUserStorage implements UserStorage {
     public Collection<User> findAll() {
         return Collections.unmodifiableCollection(userMap.values());
     }
+
+    @Override
+    public void deleteFriendship(Integer userId, Integer friendId) { // TODO: 16.06.2022 имплиментировать
+
+    }
 }

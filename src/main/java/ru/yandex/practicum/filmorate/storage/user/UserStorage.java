@@ -13,4 +13,5 @@ public interface UserStorage {
     User update(User user) throws UserNotFoundException;
     User delete(User user) throws UserNotFoundException;
     Collection<User> findAll();
+    void deleteFriendship(Integer userId, Integer friendId);
 }
