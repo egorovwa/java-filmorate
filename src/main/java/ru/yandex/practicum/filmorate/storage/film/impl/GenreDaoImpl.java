@@ -8,10 +8,7 @@ import ru.yandex.practicum.filmorate.storage.film.GenreDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class GenreDaoImpl implements GenreDao {
@@ -40,7 +37,7 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public Set<Genre> findGenreFilm(Integer filmId) {
+    public TreeSet<Genre> findGenreFilm(Integer filmId) {
         String sql = "SELECT G2.GENRES_ID, G2.GENRE_NAME\n" +
                 "FROM FILM_GENRES AS gf\n" +
                 "JOIN GENRES G2 on G2.GENRES_ID = gf.GENRES_ID\n" +
@@ -50,7 +47,7 @@ public class GenreDaoImpl implements GenreDao {
         if (genres.isEmpty()){
             return null;
         }
-        return new HashSet<>(genres);
+        return new TreeSet<>(genres);
     }
 
     @Override

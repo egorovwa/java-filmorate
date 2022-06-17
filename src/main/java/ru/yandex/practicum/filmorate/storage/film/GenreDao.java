@@ -4,12 +4,14 @@ import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public interface GenreDao {
     Genre findGenreById(Integer genreId) throws GenreNotFoundException;
     Collection<Genre> findAllGenre();
-    Set<Genre> findGenreFilm(Integer filmId);
+    TreeSet<Genre> findGenreFilm(Integer filmId);
     void addFilmToGenre(Integer filmId,Integer genreId);
     void deleteFilmToGenre(Integer filmId, Integer genreId);
 }

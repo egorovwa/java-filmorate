@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 public class Film {
@@ -28,14 +29,15 @@ public class Film {
     Integer duration;
     int rate = 0;
     Set<Integer> likeSet;
+    @NonNull
     Mpa mpa;
-    Set<Genre> genres;
+    TreeSet<Genre> genres;
 
     public Film() {
     }
 
     public Film(Integer id, String name, String description, LocalDate releaseDate, Integer duration, Integer rate,
-                Set<Integer> likeSet, Mpa mpa, Set<Genre> genres) {
+                Set<Integer> likeSet, Mpa mpa, TreeSet<Genre> genres) {
         this.id = id;
         this.name = name;
         this.description = description;

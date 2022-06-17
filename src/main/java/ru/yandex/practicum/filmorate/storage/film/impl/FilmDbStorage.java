@@ -20,11 +20,9 @@ import ru.yandex.practicum.filmorate.storage.film.LikesDao;
 import ru.yandex.practicum.filmorate.storage.film.MpaDao;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -63,7 +61,7 @@ public class FilmDbStorage implements FilmStorage {
         Integer rate = rs.getInt("RATE");
         Integer duration = rs.getInt("DURATION");
         Mpa mpa = mpaDao.findMpaById(rs.getInt("MPA_ID"));
-        Set<Genre> genresSet = genreDao.findGenreFilm(id);
+        TreeSet<Genre> genresSet = genreDao.findGenreFilm(id);
         Set<Integer> likes = likesDao.findFilmLikes(id);// = new HashSet<>(); // TODO: 16.06.2022 likes
 
 

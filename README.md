@@ -1,3 +1,3 @@
 # java-filmorate
 Template repository for Filmorate project.
-![DB Diagram](filmorate_DB_diagram.png)
+![DB Diagram](diagram_import.png)
