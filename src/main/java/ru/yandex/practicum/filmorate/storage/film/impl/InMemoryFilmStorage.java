@@ -78,4 +78,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Collection<Film> findAll() {
         return Collections.unmodifiableCollection(filmMap.values());
     }
+
+    @Override
+    public Collection<Film> findPopularFilm(Integer count) {
+        return null;
+    }
 }

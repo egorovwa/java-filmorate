@@ -22,7 +22,8 @@ public class ErrorHandler {
     }
 
 
-    @ExceptionHandler({FilmNotFoundException.class, UserNotFoundException.class})
+    @ExceptionHandler({FilmNotFoundException.class, UserNotFoundException.class, MpaNotFoundException.class,
+    GenreNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> notFoundHendler(NotFoundException e) {
         return Map.of("error", e.getMessage(), e.getParm(), e.getValue());

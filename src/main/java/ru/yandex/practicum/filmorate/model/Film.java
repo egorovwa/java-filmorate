@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -25,8 +26,34 @@ public class Film {
     LocalDate releaseDate;
     @Positive
     Integer duration;
-    Integer rate;
-    Set<Integer> likeSet = new HashSet<>();
+    int rate = 0;
+    Set<Integer> likeSet;
     Mpa mpa;
     Set<Genre> genres;
+
+    public Film() {
+    }
+
+    public Film(Integer id, String name, String description, LocalDate releaseDate, Integer duration, Integer rate,
+                Set<Integer> likeSet, Mpa mpa, Set<Genre> genres) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.rate = rate;
+        this.likeSet = likeSet;
+        this.mpa = mpa;
+        this.genres = genres;
+    }
+
+    public Film(String name, String description, LocalDate releaseDate, Integer duration, Integer rate, Mpa mpa) {
+        this.name = name;
+        this.description = description;
+        this.releaseDate = releaseDate;
+        this.duration = duration;
+        this.rate = rate;
+        this.mpa = mpa;
+    }
+
 }
