@@ -84,7 +84,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public void deleteFriendship(Integer userId, Integer friendId) { // TODO: 16.06.2022 имплиментировать
+    public void deleteFriendship(Integer userId, Integer friendId) {
 
     }
 }

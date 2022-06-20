@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestControllerAdvice("ru.yandex.practicum.filmorate.controller")
 public class ErrorHandler {
@@ -27,6 +28,11 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> notFoundHendler(NotFoundException e) {
         return Map.of("error", e.getMessage(), e.getParm(), e.getValue());
+    }
+    @ExceptionHandler({NoSuchElementException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String,String> noSuchElementHendler(NoSuchElementException e){
+        return Map.of("error",e.getMessage());
     }
 
     @ExceptionHandler({UserAlreadyExistsException.class, FileAlreadyExistsException.class})

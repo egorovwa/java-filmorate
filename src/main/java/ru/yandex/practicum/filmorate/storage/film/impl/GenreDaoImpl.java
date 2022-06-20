@@ -9,9 +9,7 @@ import ru.yandex.practicum.filmorate.storage.film.GenreDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.TreeSet;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
@@ -37,7 +35,7 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public TreeSet<Genre> findGenreFilm(Integer filmId) {
+    public Set<Genre> findGenreFilm(Integer filmId) {
         String sql = "SELECT G2.GENRES_ID, G2.GENRE_NAME\n" +
                 "FROM FILM_GENRES AS gf\n" +
                 "JOIN GENRES G2 on G2.GENRES_ID = gf.GENRES_ID\n" +
@@ -45,9 +43,9 @@ public class GenreDaoImpl implements GenreDao {
                 "ORDER BY GENRES_ID";
         Collection<Genre> genres = jdbcTemplate.query(sql, (rs, rowNum) -> createGenre(rs),filmId);
         if (genres.isEmpty()){
-            return null;
+            return new HashSet<>(); // TODO: 20.06.2022 В данном случае лучше вернуть пустой список, а не null :)
         }
-        return new TreeSet<>(genres);
+        return new HashSet<>(genres); // TODO: 20.06.2022 Записи уже были отсортированы в sql-запросе, надо ли их еще раз сортировать в TreeSet? :)
     }
 
     @Override

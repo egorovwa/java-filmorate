@@ -48,7 +48,7 @@ public class FilmService {
         }
     }
 
-    public Collection<Film> findPopularFilm(int count) {    // TODO: 17.06.2022 переделатб с rate
+    public Collection<Film> findPopularFilm(int count) {
         log.info("Передан список из {} популярных фильмов", count);
         return filmStorage.findPopularFilm(count);
     }

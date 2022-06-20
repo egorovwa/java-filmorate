@@ -38,18 +38,14 @@ public class FilmDbStorage implements FilmStorage {
     @Override
     public Film findById(int id) throws FilmNotFoundException {
         String sql = "SELECT * FROM FILMS WHERE FILM_ID = ?";
-        Optional<Film> film = jdbcTemplate.query(sql, (rs, rowNum) -> {
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
             try {
                 return createFilm(rs);
             } catch (MpaNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        }, id).stream().findAny();
-        if (film.isPresent()) {
-            return film.get();
-        } else {
-            throw new FilmNotFoundException("Ползователь не найден.", "id", String.valueOf(id));
-        }
+        }, id).stream().findAny().orElseThrow();
+
     }
 
     private Film createFilm(ResultSet rs) throws SQLException, MpaNotFoundException {
@@ -60,7 +56,7 @@ public class FilmDbStorage implements FilmStorage {
         Integer rate = rs.getInt("RATE");
         Integer duration = rs.getInt("DURATION");
         Mpa mpa = mpaDao.findMpaById(rs.getInt("MPA_ID"));
-        TreeSet<Genre> genresSet = genreDao.findGenreFilm(id);
+        Set<Genre> genresSet = genreDao.findGenreFilm(id);
         Set<Integer> likes = likesDao.findFilmLikes(id);
 
 
@@ -111,18 +107,24 @@ public class FilmDbStorage implements FilmStorage {
         });
         if (film.getGenres() != null) {
             Set<Genre> oldGenres = genreDao.findGenreFilm(film.getId());
-            if (oldGenres!=null && !oldGenres.equals(film.getGenres())) {
+            if (oldGenres != null && !oldGenres.equals(film.getGenres())) {
                 oldGenres.forEach(r -> genreDao.deleteFilmToGenre(film.getId(), r.getId()));
                 film.getGenres().forEach(r -> genreDao.addFilmToGenre(film.getId(), r.getId()));
             } else {
                 film.getGenres().forEach(r -> genreDao.addFilmToGenre(film.getId(), r.getId()));
             }
         }
-        return film;
+        return findById(film.getId());
     }
 
-    @Override
+    @Override  // TODO: 20.06.2022  : 20.06.2022 Пустой метод, тут что-то должно быть? :)
     public void delete(int id) {
+        String sqlDeleteFilm = "DELETE FROM FILMS WHERE FILM_ID=?";
+        findById(id);
+        jdbcTemplate.update(sqlDeleteFilm,ps -> {
+            ps.setInt(1,id);
+        });
+
 
     }
 

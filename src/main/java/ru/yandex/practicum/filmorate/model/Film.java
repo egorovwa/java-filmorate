@@ -28,13 +28,13 @@ public class Film {
     Set<Integer> likeSet;
     @NonNull
     Mpa mpa;
-    TreeSet<Genre> genres;
+    Set<Genre> genres;
 
     public Film() {
     }
 
     public Film(Integer id, String name, String description, LocalDate releaseDate, Integer duration, Integer rate,
-                Set<Integer> likeSet, Mpa mpa, TreeSet<Genre> genres) {
+                Set<Integer> likeSet, Mpa mpa, Set<Genre> genres) {
         this.id = id;
         this.name = name;
         this.description = description;
