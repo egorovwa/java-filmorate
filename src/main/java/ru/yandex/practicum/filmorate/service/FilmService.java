@@ -22,7 +22,7 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final LikesDao likesDao;
 
-    public void addLike(int id, int userId) throws FilmNotFoundException, SQLException, MpaNotFoundException {
+    public void addLike(int id, int userId) throws FilmNotFoundException, MpaNotFoundException {
         Film film = filmStorage.findById(id);
         if (film.getLikeSet() != null) {
             film.getLikeSet().add(userId);
@@ -35,7 +35,7 @@ public class FilmService {
         log.info("Пользователь id {} добавил лайк фильму id {}", userId, id);
     }
 
-    public void deleteLike(int id, int userId) throws FilmNotFoundException, SQLException, MpaNotFoundException {
+    public void deleteLike(int id, int userId) throws FilmNotFoundException, MpaNotFoundException {
         Film film = filmStorage.findById(id);
         if (film.getLikeSet() != null && film.getLikeSet().contains(userId)) {
             film.getLikeSet().remove(userId);
@@ -68,7 +68,7 @@ public class FilmService {
         return filmStorage.findAll();
     }
 
-    public Film findById(int id) throws FilmNotFoundException, SQLException, MpaNotFoundException {
+    public Film findById(int id) throws FilmNotFoundException, MpaNotFoundException {
         return filmStorage.findById(id);
     }
 }

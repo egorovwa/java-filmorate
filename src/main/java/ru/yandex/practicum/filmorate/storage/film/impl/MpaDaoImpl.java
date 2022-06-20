@@ -31,7 +31,7 @@ public class MpaDaoImpl implements MpaDao {
     }
 
     private Mpa mpaCreate(ResultSet rs) throws SQLException {
-        Integer id = rs.getInt("MPA_ID");
+        int id = rs.getInt("MPA_ID");
         String name = rs.getString("MPA_NAME");
         String description = rs.getString("MPA_DESCRIPTION");
         return new Mpa(id, name, description);

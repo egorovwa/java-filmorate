@@ -60,16 +60,13 @@ public class UserDbStorage implements UserStorage {
         if (user.getId() == null) {
             String sql = "INSERT INTO USERS(email, login, name, birthday) VALUES (?,?,?,?)";
             KeyHolder keyHolder = new GeneratedKeyHolder();
-            jdbcTemplate.update(new PreparedStatementCreator() {
-                @Override
-                public PreparedStatement createPreparedStatement(Connection con) throws SQLException {
-                    PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-                    statement.setString(1, user.getEmail());
-                    statement.setString(2, user.getLogin());
-                    statement.setString(3, user.getName());
-                    statement.setDate(4, Date.valueOf(user.getBirthday()));
-                    return statement;
-                }
+            jdbcTemplate.update(con -> {
+                PreparedStatement statement = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                statement.setString(1, user.getEmail());
+                statement.setString(2, user.getLogin());
+                statement.setString(3, user.getName());
+                statement.setDate(4, Date.valueOf(user.getBirthday()));
+                return statement;
             }, keyHolder);
 
             user.setId(keyHolder.getKey().intValue());
@@ -103,9 +100,7 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User delete(User user) {
         String sql = "DELETE FROM FRIENDSHIP WHERE USER_ID = ?";
-        jdbcTemplate.update(sql, ps -> {
-            ps.setInt(1, user.getId());
-        });
+        jdbcTemplate.update(sql, ps -> ps.setInt(1, user.getId()));
         return user;
     }
 
