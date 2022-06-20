@@ -20,12 +20,8 @@ public class MpaDaoImpl implements MpaDao {
     @Override
     public Mpa findMpaById(Integer mpaId) throws MpaNotFoundException {
         String sql = "SELECT * FROM MPAS WHERE MPA_ID = ?";
-        Optional<Mpa> mpa = jdbcTemplate.query(sql, (rs, rowNum) -> mpaCreate(rs), mpaId).stream().findAny();
-        if (mpa.isPresent()) {
-            return mpa.get();
-        } else {
-            throw new MpaNotFoundException("MPA не найден", "mpa id", String.valueOf(mpaId));
-        }
+        return jdbcTemplate.query(sql, (rs, rowNum) -> mpaCreate(rs), mpaId).stream().findAny()
+                .orElseThrow(()->new MpaNotFoundException("MPA не найден", "mpa id", String.valueOf(mpaId)));
     }
 
     @Override

@@ -44,7 +44,7 @@ public class FilmDbStorage implements FilmStorage {
             } catch (MpaNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        }, id).stream().findAny().orElseThrow();
+        }, id).stream().findAny().orElseThrow(()->new FilmNotFoundException("Фильм не найден","id",String.valueOf(id)));
 
     }
 
@@ -117,17 +117,14 @@ public class FilmDbStorage implements FilmStorage {
         return findById(film.getId());
     }
 
-    @Override  // TODO: 20.06.2022  : 20.06.2022 Пустой метод, тут что-то должно быть? :)
+    @Override
     public void delete(int id) {
         String sqlDeleteFilm = "DELETE FROM FILMS WHERE FILM_ID=?";
         findById(id);
-        jdbcTemplate.update(sqlDeleteFilm,ps -> {
-            ps.setInt(1,id);
+        jdbcTemplate.update(sqlDeleteFilm, ps -> {
+            ps.setInt(1, id);
         });
-
-
     }
-
 
     @Override
     public Collection<Film> findAll() {

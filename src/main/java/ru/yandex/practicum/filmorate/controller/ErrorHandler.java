@@ -24,15 +24,10 @@ public class ErrorHandler {
 
 
     @ExceptionHandler({FilmNotFoundException.class, UserNotFoundException.class, MpaNotFoundException.class,
-    GenreNotFoundException.class})
+            GenreNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> notFoundHendler(NotFoundException e) {
         return Map.of("error", e.getMessage(), e.getParm(), e.getValue());
-    }
-    @ExceptionHandler({NoSuchElementException.class})
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String,String> noSuchElementHendler(NoSuchElementException e){
-        return Map.of("error",e.getMessage());
     }
 
     @ExceptionHandler({UserAlreadyExistsException.class, FileAlreadyExistsException.class})
@@ -40,10 +35,11 @@ public class ErrorHandler {
     public Map<String, String> alreadyExist(AlreadyExistsException e) {
         return Map.of("error", e.getMessage(), e.getParm(), e.getValue());
     }
+
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String,String> ConstraintViolation(ConstraintViolationException e){
-        return Map.of("Error",e.getMessage());
+    public Map<String, String> ConstraintViolation(ConstraintViolationException e) {
+        return Map.of("Error", e.getMessage());
     }
 
 }

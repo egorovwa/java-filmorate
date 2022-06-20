@@ -19,13 +19,8 @@ public class GenreDaoImpl implements GenreDao {
     @Override
     public Genre findGenreById(Integer genreId) throws GenreNotFoundException {
         String sql = "SELECT * FROM GENRES WHERE GENRES_ID =?";
-        Optional<Genre> genre = jdbcTemplate.query(sql, (rs, rowNum) -> createGenre(rs), genreId).stream().findAny();
-        if (genre.isPresent()) {
-            return genre.get();
-        } else {
-            throw new GenreNotFoundException("Жанр не найден", "id", String.valueOf(genreId));
-        }
-
+        return jdbcTemplate.query(sql, (rs, rowNum) -> createGenre(rs), genreId).stream().findAny()
+                .orElseThrow(()->new GenreNotFoundException("Жанр не найден","id",String.valueOf(genreId)));
     }
 
     @Override
@@ -43,9 +38,9 @@ public class GenreDaoImpl implements GenreDao {
                 "ORDER BY GENRES_ID";
         Collection<Genre> genres = jdbcTemplate.query(sql, (rs, rowNum) -> createGenre(rs),filmId);
         if (genres.isEmpty()){
-            return new HashSet<>(); // TODO: 20.06.2022 В данном случае лучше вернуть пустой список, а не null :)
+            return new HashSet<>();
         }
-        return new HashSet<>(genres); // TODO: 20.06.2022 Записи уже были отсортированы в sql-запросе, надо ли их еще раз сортировать в TreeSet? :)
+        return new HashSet<>(genres);
     }
 
     @Override

@@ -25,19 +25,15 @@ import java.util.Set;
 @Slf4j
 @RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
-   private final JdbcTemplate jdbcTemplate;
-   private final FriendshipDao friendshipDao;
+    private final JdbcTemplate jdbcTemplate;
+    private final FriendshipDao friendshipDao;
 
     @Override
     public User findById(int id) throws UserNotFoundException {
         String sql = "SELECT * FROM USERS WHERE USER_ID=?";
-        Optional<User> user = jdbcTemplate.query(sql, (rs, colNum) -> createUser(rs), String.valueOf(id))
-                .stream().findAny();
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new UserNotFoundException("Ползователь не найден.", "id", String.valueOf(id));
-        }
+        return jdbcTemplate.query(sql, (rs, colNum) -> createUser(rs), String.valueOf(id))
+                .stream().findAny()
+                .orElseThrow(()->new UserNotFoundException("Ползователь не найден.", "id", String.valueOf(id)));
     }
 
     private User createUser(ResultSet rs) throws SQLException {
@@ -53,13 +49,9 @@ public class UserDbStorage implements UserStorage {
     @Override
     public User findByEmail(String email) throws UserNotFoundException {
         String sql = "SELECT * FROM USERS WHERE EMAIL=?";
-        Optional<User> user = jdbcTemplate.query(sql, (rs, colNum) -> createUser(rs), String.valueOf(email))
-                .stream().findAny();
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new UserNotFoundException("Ползователь не найден.", "email", email);
-        }
+        return jdbcTemplate.query(sql, (rs, colNum) -> createUser(rs), String.valueOf(email))
+                .stream().findAny()
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден", "Email", email));
     }
 
     @Override
@@ -78,7 +70,7 @@ public class UserDbStorage implements UserStorage {
                     statement.setDate(4, Date.valueOf(user.getBirthday()));
                     return statement;
                 }
-            },keyHolder);
+            }, keyHolder);
 
             user.setId(keyHolder.getKey().intValue());
             return user;
@@ -126,6 +118,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void deleteFriendship(Integer userId, Integer friendId) {
-        friendshipDao.deleteFriendShip(userId,friendId);
+        friendshipDao.deleteFriendShip(userId, friendId);
     }
 }
