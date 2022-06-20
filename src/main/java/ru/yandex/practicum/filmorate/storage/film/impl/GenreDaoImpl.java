@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
@@ -8,15 +9,14 @@ import ru.yandex.practicum.filmorate.storage.film.GenreDao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.TreeSet;
 
 @Component
+@RequiredArgsConstructor
 public class GenreDaoImpl implements GenreDao {
-    JdbcTemplate jdbcTemplate;
-
-    public GenreDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+   private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Genre findGenreById(Integer genreId) throws GenreNotFoundException {

@@ -1,22 +1,17 @@
 package ru.yandex.practicum.filmorate.storage.film.impl;
 
-import org.springframework.dao.DataAccessException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import ru.yandex.practicum.filmorate.exception.LikeAlreadyExistsException;
 import ru.yandex.practicum.filmorate.storage.film.LikesDao;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class LikesDaoImpl implements LikesDao {
-    JdbcTemplate jdbcTemplate;
-
-    public LikesDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
+    private final JdbcTemplate jdbcTemplate;
     @Override
     public void addLike(Integer userId, Integer filmId) {
         String sql = "INSERT INTO LIKES(user_id, film_id) VALUES ( ?,? );" +

@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
@@ -12,12 +13,9 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 public class MpaDaoImpl implements MpaDao {
-    JdbcTemplate jdbcTemplate;
-
-    public MpaDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    private final JdbcTemplate jdbcTemplate;
 
     @Override
     public Mpa findMpaById(Integer mpaId) throws MpaNotFoundException {
@@ -32,8 +30,8 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public Collection<Mpa> findAllMpa() {
-        String sql ="SELECT * FROM MPAS";
-        return jdbcTemplate.query(sql,(rs, rowNum) -> mpaCreate(rs));
+        String sql = "SELECT * FROM MPAS";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> mpaCreate(rs));
     }
 
     private Mpa mpaCreate(ResultSet rs) throws SQLException {

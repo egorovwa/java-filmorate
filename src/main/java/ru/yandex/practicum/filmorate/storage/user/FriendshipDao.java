@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 

@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
@@ -20,11 +19,11 @@ import ru.yandex.practicum.filmorate.storage.film.LikesDao;
 import ru.yandex.practicum.filmorate.storage.film.MpaDao;
 
 import java.sql.*;
-import java.sql.Date;
 import java.time.LocalDate;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
+import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Component
 @Primary
@@ -37,11 +36,11 @@ public class FilmDbStorage implements FilmStorage {
 
 
     @Override
-    public Film findById(int id) throws FilmNotFoundException, MpaNotFoundException {
+    public Film findById(int id) throws FilmNotFoundException {
         String sql = "SELECT * FROM FILMS WHERE FILM_ID = ?";
         Optional<Film> film = jdbcTemplate.query(sql, (rs, rowNum) -> {
             try {
-                return createFilm(rs); // TODO: 16.06.2022 exception "В филме не сущ. mpa"???""
+                return createFilm(rs);
             } catch (MpaNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -62,7 +61,7 @@ public class FilmDbStorage implements FilmStorage {
         Integer duration = rs.getInt("DURATION");
         Mpa mpa = mpaDao.findMpaById(rs.getInt("MPA_ID"));
         TreeSet<Genre> genresSet = genreDao.findGenreFilm(id);
-        Set<Integer> likes = likesDao.findFilmLikes(id);// = new HashSet<>(); // TODO: 16.06.2022 likes
+        Set<Integer> likes = likesDao.findFilmLikes(id);
 
 
         return new Film(id, name, description, releaseDate, duration, rate, likes, mpa, genresSet);
@@ -123,7 +122,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public void delete(int id) throws FilmNotFoundException {
+    public void delete(int id) {
 
     }
 
@@ -133,7 +132,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "SELECT * FROM FILMS";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             try {
-                return createFilm(rs); // TODO: 16.06.2022 exception "В филме не сущ. mpa"???""
+                return createFilm(rs);
             } catch (MpaNotFoundException e) {
                 throw new RuntimeException(e);
             }
@@ -142,10 +141,10 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> findPopularFilm(Integer count) {
-        String sql = "SELECT * FROM FILMS ORDER BY RATE  LIMIT ?"; // TODO: 17.06.2022 проверит desv
+        String sql = "SELECT * FROM FILMS ORDER BY RATE  LIMIT ?";
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             try {
-                return createFilm(rs); // TODO: 16.06.2022 exception "В филме не сущ. mpa"???""
+                return createFilm(rs);
             } catch (MpaNotFoundException e) {
                 throw new RuntimeException(e);
             }

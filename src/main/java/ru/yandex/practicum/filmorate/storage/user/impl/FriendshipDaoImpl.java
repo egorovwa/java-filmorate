@@ -1,27 +1,27 @@
 package ru.yandex.practicum.filmorate.storage.user.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.storage.user.FriendshipDao;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Component
+@RequiredArgsConstructor
 public class FriendshipDaoImpl implements FriendshipDao {
     public static final String UDATE_STATUS_SQL = "UPDATE FRIENDSHIP SET STATUS=? WHERE ID=?";
-    JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
-    public FriendshipDaoImpl(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 
     @Override
     public Set<Integer> findFriendshipsByUserId(Integer userId) {
         String sql = "SELECT FRIEND_ID FROM FRIENDSHIP WHERE USER_ID=?";
-        Set<Integer> friends = new HashSet<>(jdbcTemplate.query(sql,
+        return new HashSet<>(jdbcTemplate.query(sql,
                 (rs, rowNum) -> rs.getInt("FRIEND_ID"), userId));
-        return friends;
     }
 
     @Override

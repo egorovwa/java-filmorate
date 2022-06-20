@@ -1,47 +1,32 @@
 package ru.yandex.practicum.filmorate.storage.user.impl;
 
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.JDBCException;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
-import ru.yandex.practicum.filmorate.model.FriendShip;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.FriendshipDao;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.sql.*;
-import java.text.DateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
 @Component
 @Primary
 @Slf4j
+@RequiredArgsConstructor
 public class UserDbStorage implements UserStorage {
-    JdbcTemplate jdbcTemplate;
-    FriendshipDao friendshipDao;
-
-    public UserDbStorage(JdbcTemplate jdbcTemplate, FriendshipDao friendshipDao) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.friendshipDao = friendshipDao;
-    }
+   private final JdbcTemplate jdbcTemplate;
+   private final FriendshipDao friendshipDao;
 
     @Override
     public User findById(int id) throws UserNotFoundException {
@@ -94,12 +79,7 @@ public class UserDbStorage implements UserStorage {
                     return statement;
                 }
             },keyHolder);
-/*            int newId = jdbcTemplate.update(sql, ps -> {
-                ps.setString(1, user.getEmail());
-                ps.setString(2, user.getLogin());
-                ps.setString(3, user.getName());
-                ps.setDate(4, Date.valueOf(user.getBirthday()));
-            });*/
+
             user.setId(keyHolder.getKey().intValue());
             return user;
         } else {
@@ -129,7 +109,7 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public User delete(User user) throws UserNotFoundException {
+    public User delete(User user) {
         String sql = "DELETE FROM FRIENDSHIP WHERE USER_ID = ?";
         jdbcTemplate.update(sql, ps -> {
             ps.setInt(1, user.getId());
