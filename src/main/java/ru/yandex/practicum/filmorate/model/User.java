@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.controller.Validators.UserLogin;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -20,5 +19,14 @@ public class User {
      String name;
     @Past(message = "Дата рождения не может быть в будущим.")
     final LocalDate birthday;
-    Set<Integer> friends = new HashSet<>();
+    Set<Integer> friends;
+
+    public User(Integer id, String email, String login, String name, LocalDate birthday, Set<Integer> friends) {
+        this.id = id;
+        this.email = email;
+        this.login = login;
+        this.name = name;
+        this.birthday = birthday;
+        this.friends = friends;
+    }
 }

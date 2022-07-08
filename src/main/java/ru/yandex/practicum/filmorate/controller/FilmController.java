@@ -4,11 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.FilmAlreadyExistsException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.LikeAlreadyExistsException;
+import ru.yandex.practicum.filmorate.exception.MpaNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.sql.SQLException;
 import java.util.Collection;
 
 @RestController
@@ -22,7 +25,7 @@ public class FilmController {
     }
 
     @PutMapping("/films")
-    public Film update(@Valid @RequestBody Film film) throws FilmNotFoundException {
+    public Film update(@Valid @RequestBody Film film) throws FilmNotFoundException, MpaNotFoundException {
         return filmService.updateFilm(film);
     }
 
@@ -32,17 +35,17 @@ public class FilmController {
     }
 
     @GetMapping("/films/{id}")
-    public Film findById(@PathVariable @Min(1) int id) throws FilmNotFoundException {
+    public Film findById(@PathVariable @Min(1) int id) throws FilmNotFoundException, SQLException, MpaNotFoundException {
         return filmService.findById(id);
     }
 
     @PutMapping("/films/{id}/like/{userId}")
-    public void addLike(@PathVariable int id, @PathVariable int userId) throws FilmNotFoundException {
+    public void addLike(@PathVariable int id, @PathVariable int userId) throws FilmNotFoundException, SQLException, MpaNotFoundException, LikeAlreadyExistsException {
         filmService.addLike(id, userId);
     }
 
     @DeleteMapping("/films/{id}/like/{userId}")
-    public void deleteLike(@PathVariable int id, @PathVariable int userId) throws FilmNotFoundException {
+    public void deleteLike(@PathVariable @Min(1) int id, @PathVariable @Min(1) int userId) throws FilmNotFoundException, SQLException, MpaNotFoundException {
         filmService.deleteLike(id, userId);
     }
 

@@ -11,6 +11,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.nio.file.FileAlreadyExistsException;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestControllerAdvice("ru.yandex.practicum.filmorate.controller")
 public class ErrorHandler {
@@ -22,7 +23,8 @@ public class ErrorHandler {
     }
 
 
-    @ExceptionHandler({FilmNotFoundException.class, UserNotFoundException.class})
+    @ExceptionHandler({FilmNotFoundException.class, UserNotFoundException.class, MpaNotFoundException.class,
+            GenreNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> notFoundHendler(NotFoundException e) {
         return Map.of("error", e.getMessage(), e.getParm(), e.getValue());
@@ -33,10 +35,11 @@ public class ErrorHandler {
     public Map<String, String> alreadyExist(AlreadyExistsException e) {
         return Map.of("error", e.getMessage(), e.getParm(), e.getValue());
     }
+
     @ExceptionHandler(ConstraintViolationException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String,String> ConstraintViolation(ConstraintViolationException e){
-        return Map.of("Error",e.getMessage());
+    public Map<String, String> ConstraintViolation(ConstraintViolationException e) {
+        return Map.of("Error", e.getMessage());
     }
 
 }
